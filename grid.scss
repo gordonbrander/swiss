@@ -1,46 +1,90 @@
+@mixin clearfix() {
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+@function colspan($n, $unit, $gutter) {
+  @return ($unit * $n) + ($gutter * ($n - 1));
+}
+
+// Calculate nearest column width that will fit `$n` number of columns within
+// `$width`.
+@function fit-colspan($n, $width, $gutter) {
+  @return floor(($width - ($gutter * ($n - 1))) / $n);
+}
+
 // Calculate a column width for a given column span `$n`, `$unit` width and
 // `$gutter` width.
 @mixin unit($n, $unit, $gutter) {
-  width: ($unit * $n) + ($gutter * ($n - 1));
+  width: colspan($n, $unit, $gutter);
 }
 
 // Create columns by giving a number of columns, a grid unit width and a gutter
 // width.
 //
-// - `$ns`: the selector namespace (everything before the col number).
 // - `$n`: the number of columns.
 // - `$unit`: the unit width.
 // - `$gutter`: gutter width
+// - `$ns`: an optional namespace for classes.
 //
 // Example:
 //
-//     @include cols('.sq-col--', 12, 38px, 24px);
+//     @include cols('sqr', 12, 38px, 24px);
 //
-@mixin cols($ns, $n, $unit, $gutter) {
+@mixin cols($n, $unit, $gutter, $ns: '') {
   %col {
     float: left;
-    margin-left: $gutter;
-
-    &:first-child {
-      margin-left: 0;
-    }
+    margin-left: ($gutter / 2);
+    margin-right: ($gutter / 2);
   }
 
   @for $i from 1 through $n {
-    #{$ns}#{$i} {
+    .#{$ns}col-#{$i} {
       @include unit($i, $unit, $gutter);
       @extend %col;
     }
   }
 }
 
+@mixin row($gutter, $ns: '') {
+  .#{$ns}row {
+    @include clearfix;
+    margin-left: -1 * ($gutter / 2);
+    margin-right: -1 * ($gutter / 2);
+  }
+}
+
+@mixin container($n, $unit, $gutter, $ns: '') {
+  .#{$ns}container {
+    @include unit($n, $unit, $gutter);
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 // Create n columns that fit within a given `$width`.
-@mixin fit-cols($ns, $n, $width, $gutter) {
+@mixin fit-cols($n, $width, $gutter, $ns) {
+  $unit: fit-colspan($n, $width, $gutter);
+  @include cols($n, $unit, $gutter, $ns);
+}
+
+@mixin fluid-cols($n, $gutter, $ns) {
   $unit: floor(($width - ($gutter * ($n - 1))) / $n);
   @include cols($ns, $n, $unit, $gutter);
 }
 
-@mixin fluid-cols($ns, $n, $gutter) {
-  $unit: floor(($width - ($gutter * ($n - 1))) / $n);
-  @include cols($ns, $n, $unit, $gutter);
+@mixin grid($n, $unit, $gutter, $ns: '') {
+  @include container($n, $unit, $gutter, $ns);
+  @include row($gutter, $ns);
+  @include cols($n, $unit, $gutter, $ns);
+}
+
+@mixin fit-grid($n, $width, $gutter, $ns: '') {
+  $unit: fit-colspan($n, $width, $gutter);
+  @include container($n, $unit, $gutter, $ns);
+  @include row($gutter, $ns);
+  @include cols($n, $unit, $gutter, $ns);
 }
