@@ -7,9 +7,4 @@ $lg: 960px;
 $xl: 1400px;
 $gutter: 24px;
 
-@include debug($ns);
-@include base-container($gutter, $ns);
-@include grid-breakpoint(12, $sm, $gutter, ('sm'), $ns);
-@include grid-breakpoint(12, $md, $gutter, ('sm', 'md'), $ns);
-@include grid-breakpoint(12, $lg, $gutter, ('sm', 'md', 'lg'), $ns);
-@include grid-breakpoint(12, $xl, $gutter, ('sm', 'md', 'lg', 'xl'), $ns);
+@include grid-system(12, $sm, $md, $lg, $xl, $gutter, $ns);
