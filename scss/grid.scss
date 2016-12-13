@@ -1,0 +1,149 @@
+@mixin clearfix() {
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+@function namespace($x, $ns: '') {
+  @if $ns != '' {
+    @return #{$ns}-#{$x};
+  } @else {
+    @return $x;
+  }
+}
+
+// Media of at least the minimum breakpoint width. No query for the smallest breakpoint.
+// Makes the @content apply to the given breakpoint and wider.
+@mixin media-breakpoint-min($min) {
+  @if $min {
+    @media (min-width: $min) {
+      @content;
+    }
+  } @else {
+    @content;
+  }
+}
+
+@function colspan($colspan, $unit, $gutter) {
+  @return ($unit * $colspan) + ($gutter * ($colspan - 1));
+}
+
+// Calculate nearest column width that will fit `$n` number of columns within
+// `$width`.
+@function fit-colspan($colspan, $width, $gutter) {
+  @return floor(($width - ($gutter * ($colspan - 1))) / $colspan);
+}
+
+// Calculate a column width for a given column span `$n`, `$unit` width and
+// `$gutter` width.
+@mixin unit($colspan, $unit, $gutter) {
+  width: colspan($colspan, $unit, $gutter);
+}
+
+@mixin colprops($colspan, $unit, $gutter) {
+  float: left;
+  margin-left: ($gutter / 2);
+  margin-right: ($gutter / 2);
+  @include unit($colspan, $unit, $gutter);  
+}
+
+// Create a column `$i` by specifying a grid unit, width, and gutter width.
+//
+// - `$colspan`: the colspan of the column.
+// - `$unit`: the unit width.
+// - `$gutter`: gutter width
+// - `$ns`: an optional namespace for classes.
+//
+// Example:
+//
+//     @include cols('sqr', 12, 38px, 24px);
+//
+@mixin col($colspan, $unit, $gutter, $ns: '') {
+  .#{namespace('col', $ns)}-#{$colspan} {
+    @include colprops($colspan, $unit, $gutter);
+  }
+}
+
+@mixin col-breakpoint($colspan, $unit, $gutter, $breakpoint, $ns) {
+  .#{namespace('col', $ns)}-#{$breakpoint}-#{$colspan} {
+    @include colprops($colspan, $unit, $gutter);
+  }
+}
+
+@mixin row($gutter, $ns) {
+  .#{namespace('row', $ns)} {
+    @include clearfix;
+    margin-left: -1 * ($gutter / 2);
+    margin-right: -1 * ($gutter / 2);
+  }
+}
+
+@mixin container($n, $unit, $gutter, $ns) {
+  .#{namespace('container', $ns)} {
+    @include unit($n, $unit, $gutter);
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@mixin base-container($gutter, $ns) {
+  .#{namespace('container', $ns)} {
+    margin-left: $gutter;
+    margin-right: $gutter;
+  }
+}
+
+@mixin debug($ns) {
+  // Debug causes columns to be rendered with a semi-transparent red background
+  // assisting in layout debugging.
+  .#{namespace('debug', $ns)} [class*="#{namespace('col', $ns)}"] {
+    background-color: rgba(255, 120, 0, 0.3);
+    box-shadow: inset 0 0 0 1px rgba(255, 120, 0, 0.3);
+  }
+}
+
+@mixin grid($n, $unit, $gutter, $ns: '') {
+  @include container($n, $unit, $gutter, $ns);
+  @include row($gutter, $ns);
+  @for $i from 1 through $n {
+    @include col($i, $unit, $gutter, $ns);
+  }
+}
+
+// Create n column grid that fits within a given `$width`.
+@mixin fit-grid($n, $width, $gutter, $ns: '') {
+  $unit: fit-colspan($n, $width, $gutter);
+  @include container($n, $unit, $gutter, $ns);
+  @include row($gutter, $ns);
+  @for $i from 1 through $n {
+    @include col($i, $unit, $gutter, $ns);
+  }
+}
+
+@mixin grid-breakpoint($n, $width, $gutter, $breakpoints, $ns) {
+  // Subtract gutter from left and right to make sure we have margin on the
+  // edges of our container.
+  $grid-width: $width - ($gutter * 2);
+  $unit: fit-colspan($n, $grid-width, $gutter);
+
+  @include media-breakpoint-min($width) {
+    @include container($n, $unit, $gutter, $ns);
+    @include row($gutter, $ns);
+    @each $breakpoint in $breakpoints {
+      @for $i from 1 through $n {
+        @include col-breakpoint($i, $unit, $gutter, $breakpoint, $ns);
+      }
+    }
+  }
+}
+
+@mixin grid-system($n, $sm, $md, $lg, $xl, $gutter, $ns: '') {
+  @include debug($ns);
+  @include base-container($gutter, $ns);
+  @include grid-breakpoint(12, $sm, $gutter, ('sm'), $ns);
+  @include grid-breakpoint(12, $md, $gutter, ('sm', 'md'), $ns);
+  @include grid-breakpoint(12, $lg, $gutter, ('sm', 'md', 'lg'), $ns);
+  @include grid-breakpoint(12, $xl, $gutter, ('sm', 'md', 'lg', 'xl'), $ns);
+}
