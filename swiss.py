@@ -2,7 +2,6 @@
 from __future__ import print_function
 import argparse
 from sys import stdout
-from math import floor
 
 calc_parser = argparse.ArgumentParser(
     description="""
@@ -11,7 +10,7 @@ calc_parser = argparse.ArgumentParser(
 )
 calc_parser.add_argument(
     "columns",
-    help="Number of columns",
+    help="Number of columns in grid",
     type=int,
     default=12
 )
@@ -23,13 +22,13 @@ calc_parser.add_argument(
 )
 calc_parser.add_argument(
     "gutter",
-    help="Gutter width",
+    help="Gutter width (may be adjusted to conform to unit)",
     type=float,
     default=24
 )
 calc_parser.add_argument(
     '-o','--include_outer',
-    help="Include outer gutter on the left and right of the grid?",
+    help="Include an outer gutter to the left and right of the grid?",
     type=bool,
     nargs="?",
     const=True,
@@ -37,7 +36,7 @@ calc_parser.add_argument(
 )
 calc_parser.add_argument(
     '-u','--unit',
-    help="""An underlying pixel grid unit to fit grid to (defaults to 1).
+    help="""An underlying pixel grid unit to fit layout grid to (defaults to 1).
     For example, if you specify 8, the grid generated will cleanly fit on top
     of an 8px grid.""",
     type=float,

@@ -11,7 +11,7 @@ setup(
     author='Gordon Brander',
     description='A command line utility for calculating layout grids',
     long_description=readme,
-    license="GPL",
+    license="GPL-3.0",
     url="https://github.com/gordonbrander/swiss",
     classifiers=[
         "Development Status :: 3 - Alpha",
