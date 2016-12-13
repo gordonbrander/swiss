@@ -19,6 +19,7 @@ Columns: 48.0, 130.0, 212.0, 294.0, 376.0, 458.0, 540.0, 622.0, 704.0, 786.0, 86
 You can use the `--unit` flag to specify an underlying grid unit. For example, if you specify 8, the grid generated will cleanly fit on top of an 8px grid.
 
 ```bash
+$ swiss_calc 12 1024 34 --include_outer --unit 8
 Width: 928.0
 Total: 992.0
 Gutter: 32.0
