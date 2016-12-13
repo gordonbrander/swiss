@@ -19,9 +19,7 @@ setup(
         "Programming Language :: Python :: 2.7",
     ],
     packages=find_packages(exclude=("tests", "tests.*")),
-    install_requires=[
-        "sass"
-    ],
+    install_requires=[],
     extras_require={},
     include_package_data=True,
     entry_points={
