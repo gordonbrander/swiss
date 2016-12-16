@@ -1,0 +1,16 @@
+@function nearest-divisible($n, $x) {
+  @return ($n - ($n % $x));
+}
+
+@function fit-col($columns, $width, $gutter, $unit: 1) {
+  $span: ($width - ($gutter * ($columns - 1))) / $columns;
+  @return nearest-divisible($span, $unit);
+}
+
+@function fit-gutter($gutter, $unit: 1) {
+  @return nearest-divisible($span, $unit);
+}
+
+@function colspan($span, $column, $gutter) {
+  @return ($column * $span) + ($gutter * ($span - 1));
+}
