@@ -26,7 +26,7 @@ setup(
     include_package_data=True,
     entry_points={
         'console_scripts': [
-            'swiss_calc=swiss:swiss_calc'
+            'swiss_calc=swiss.cli:main'
         ]
     }
 )
