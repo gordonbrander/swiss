@@ -67,19 +67,19 @@
 // Generate a grid breakpoint
 @mixin grid($columns, $column, $gutter, $breakpoints, $ns: '') {
   $width: colspan($columns, $column, $gutter);
-  @include media-breakpoint-min($width) {
-    @include container($columns, $column, $gutter, $ns);
-    @include row($gutter, $ns);
-    @each $breakpoint in $breakpoints {
-      @for $span from 1 through $columns {
-        @include col($span, $column, $gutter, $breakpoint, $ns);
-      }
+  @include container($columns, $column, $gutter, $ns);
+  @include row($gutter, $ns);
+  @each $breakpoint in $breakpoints {
+    @for $span from 1 through $columns {
+      @include col($span, $column, $gutter, $breakpoint, $ns);
     }
   }
 }
 
-@mixin grid-system($columns, $column-sm, $column-md, $column-lg, $column-xl, $gutter, $ns: '') {
-  // Debug causes columns to be rendered with a semi-transparent red background
+@mixin grid-system($columns, $width-sm, $width-md, $width-lg, $width-xl, $gutter, $unit: 1, $ns: '') {
+  $gutter: fit-gutter($gutter, $unit);
+
+  // Debug causes columns to be rendered with a semi-transparent background
   // assisting in layout debugging.
   .#{$ns}debug [class*="#{$ns}col"] {
     background-color: rgba(255, 120, 0, 0.3);
@@ -95,19 +95,25 @@
     @include col-base($span, 'md', $ns);
     @include col-base($span, 'lg', $ns);
     @include col-base($span, 'xl', $ns);
-  }    
+  }
 
-  @include grid(12, $column-sm, $gutter, ('sm'), $ns);
-  @include grid(12, $column-md, $gutter, ('sm', 'md'), $ns);
-  @include grid(12, $column-lg, $gutter, ('sm', 'md', 'lg'), $ns);
-  @include grid(12, $column-xl, $gutter, ('sm', 'md', 'lg', 'xl'), $ns);
-}
+  @include media-breakpoint-min($width-sm) {
+    $column-sm: fit-col($columns, $width-sm - ($gutter * 2), $gutter, $unit);
+    @include grid($columns, $column-sm, $gutter, ('sm'), $ns);
+  }
 
-@mixin fit-grid-system($columns, $width-sm, $width-md, $width-lg, $width-xl, $gutter, $unit: 1, $ns: '') {
-  $gutter: fit-gutter($gutter, $unit);
-  $column-sm: fit-col($columns, $width-sm, $gutter, $unit);
-  $column-md: fit-col($columns, $width-md, $gutter, $unit);
-  $column-lg: fit-col($columns, $width-lg, $gutter, $unit);
-  $column-xl: fit-col($columns, $width-lg, $gutter, $unit);
-  @include grid-system($columns, $column-sm, $column-md, $column-lg, $column-xl, $gutter, $ns);
+  @include media-breakpoint-min($width-md) {
+    $column-md: fit-col($columns, $width-md - ($gutter * 2), $gutter, $unit);
+    @include grid($columns, $column-md, $gutter, ('sm', 'md'), $ns);
+  }
+
+  @include media-breakpoint-min($width-lg) {
+    $column-lg: fit-col($columns, $width-lg - ($gutter * 2), $gutter, $unit);
+    @include grid($columns, $column-lg, $gutter, ('sm', 'md', 'lg'), $ns);
+  }
+
+  @include media-breakpoint-min($width-xl) {
+    $column-xl: fit-col($columns, $width-xl - ($gutter * 2), $gutter, $unit);
+    @include grid($columns, $column-xl, $gutter, ('sm', 'md', 'lg', 'xl'), $ns);
+  }
 }

@@ -1,11 +1,12 @@
 @import "grid.scss";
 
 $ns: 'swiss-';
+$columns: 12;
+$gutter: 24px;
+$unit: 2px;
 $sm: 600px;
 $md: 768px;
 $lg: 960px;
 $xl: 1400px;
-$gutter: 24px;
-$unit: 2px;
 
-@include fit-grid-system(12, $sm, $md, $lg, $xl, $gutter, $unit, $ns);
+@include grid-system($columns, $sm, $md, $lg, $xl, $gutter, $unit, $ns);
