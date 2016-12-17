@@ -1,6 +1,6 @@
 @import "grid-math.scss";
 
-@mixin clearfix() {
+%clearfix {
   &::after {
     content: "";
     display: table;
@@ -87,7 +87,7 @@
   }
 
   .#{$ns}row {
-    @include clearfix;
+    @extend %clearfix;
   }
 
   @for $span from 1 through $columns {
