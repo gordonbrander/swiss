@@ -22,9 +22,6 @@
 
 // Base col styles
 %col {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
   float: left;
   // Prevent empty column collapse
   min-height: 1px;  
@@ -59,30 +56,11 @@
   }
 }
 
-// Acts like a container, but does not have a width specified. Use this for
-// base style at lowest breakpoint.
-@mixin row-base($gutter, $ns: '') {
-  .#{$ns}row {
-    @include clearfix;
-    margin-left: $gutter;
-    margin-right: $gutter;
-  }
-}
-
 @mixin container($span, $column, $gutter, $ns: '') {
   .#{$ns}container {
     width: colspan($span, $column, $gutter);
     margin-left: auto;
     margin-right: auto;
-  }
-}
-
-@mixin debug($ns: '') {
-  // Debug causes columns to be rendered with a semi-transparent red background
-  // assisting in layout debugging.
-  .#{$ns}debug [class*="#{$ns}col"] {
-    background-color: rgba(255, 120, 0, 0.3);
-    box-shadow: inset 0 0 0 1px rgba(255, 120, 0, 0.3);
   }
 }
 
@@ -101,8 +79,16 @@
 }
 
 @mixin grid-system($columns, $column-sm, $column-md, $column-lg, $column-xl, $gutter, $ns: '') {
-  @include debug($ns);
-  @include row-base($gutter, $ns);
+  // Debug causes columns to be rendered with a semi-transparent red background
+  // assisting in layout debugging.
+  .#{$ns}debug [class*="#{$ns}col"] {
+    background-color: rgba(255, 120, 0, 0.3);
+    box-shadow: inset 0 0 0 1px rgba(255, 120, 0, 0.3);
+  }
+
+  .#{$ns}row {
+    @include clearfix;
+  }
 
   @for $span from 1 through $columns {
     @include col-base($span, 'sm', $ns);
