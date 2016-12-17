@@ -32,7 +32,6 @@ def colspan(span, column, gutter):
 def fit_grid(columns, width, gutter, unit=1, include_outer=False):
     """Generate a grid to fit conditions given"""
     gutter = fit_gutter(gutter, unit)
-    include_outer = include_outer
     width = (width - (gutter * 2)) if include_outer else width
     column = fit_col(columns, width, gutter, unit)
     steps = [colspan(i + 1, column, gutter) for i in range(0, columns)]
