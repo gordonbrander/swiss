@@ -20,6 +20,23 @@
   }
 }
 
+// Base col styles
+%col {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  float: left;
+  // Prevent empty column collapse
+  min-height: 1px;  
+  width: 100%;
+}
+
+@mixin col-base($span, $breakpoint, $ns: '') {
+  .#{$ns}col-#{$breakpoint}-#{$span} {
+    @extend %col;
+  }
+}
+
 // Create a column by specifying colspan, grid column width, gutter width.
 //
 // - `$colspan`: the colspan of the column.
@@ -29,18 +46,26 @@
 // - `$ns`: an optional namespace for grid classes.
 @mixin col($span, $column, $gutter, $breakpoint, $ns: '') {
   .#{$ns}col-#{$breakpoint}-#{$span} {
-    float: left;
-    margin-left: ($gutter / 2);
-    margin-right: ($gutter / 2);
+    padding-left: ($gutter / 2);
+    padding-right: ($gutter / 2);
     width: colspan($span, $column, $gutter);
   }
 }
 
 @mixin row($gutter, $ns: '') {
   .#{$ns}row {
-    @include clearfix;
     margin-left: -1 * ($gutter / 2);
     margin-right: -1 * ($gutter / 2);
+  }
+}
+
+// Acts like a container, but does not have a width specified. Use this for
+// base style at lowest breakpoint.
+@mixin row-base($gutter, $ns: '') {
+  .#{$ns}row {
+    @include clearfix;
+    margin-left: $gutter;
+    margin-right: $gutter;
   }
 }
 
@@ -49,15 +74,6 @@
     width: colspan($span, $column, $gutter);
     margin-left: auto;
     margin-right: auto;
-  }
-}
-
-// Acts like a container, but does not have a width specified. Use this for
-// base style at lowest breakpoint.
-@mixin wrapper($gutter, $ns: '') {
-  .#{$ns}row {
-    margin-left: $gutter;
-    margin-right: $gutter;
   }
 }
 
@@ -86,7 +102,15 @@
 
 @mixin grid-system($columns, $column-sm, $column-md, $column-lg, $column-xl, $gutter, $ns: '') {
   @include debug($ns);
-  @include wrapper($gutter, $ns);
+  @include row-base($gutter, $ns);
+
+  @for $span from 1 through $columns {
+    @include col-base($span, 'sm', $ns);
+    @include col-base($span, 'md', $ns);
+    @include col-base($span, 'lg', $ns);
+    @include col-base($span, 'xl', $ns);
+  }    
+
   @include grid(12, $column-sm, $gutter, ('sm'), $ns);
   @include grid(12, $column-md, $gutter, ('sm', 'md'), $ns);
   @include grid(12, $column-lg, $gutter, ('sm', 'md', 'lg'), $ns);
@@ -99,10 +123,5 @@
   $column-md: fit-col($columns, $width-md, $gutter, $unit);
   $column-lg: fit-col($columns, $width-lg, $gutter, $unit);
   $column-xl: fit-col($columns, $width-lg, $gutter, $unit);
-  @include debug($ns);
-  @include wrapper($gutter, $ns);
-  @include grid-system(12, $column-sm, $gutter, ('sm'), $ns);
-  @include grid-system(12, $column-md, $gutter, ('sm', 'md'), $ns);
-  @include grid-system(12, $column-lg, $gutter, ('sm', 'md', 'lg'), $ns);
-  @include grid-system(12, $column-xl, $gutter, ('sm', 'md', 'lg', 'xl'), $ns);
+  @include grid-system($columns, $column-sm, $column-md, $column-lg, $column-xl, $gutter, $ns);
 }

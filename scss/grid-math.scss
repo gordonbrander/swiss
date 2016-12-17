@@ -8,7 +8,7 @@
 }
 
 @function fit-gutter($gutter, $unit: 1) {
-  @return nearest-divisible($span, $unit);
+  @return nearest-divisible($gutter, $unit);
 }
 
 @function colspan($span, $column, $gutter) {

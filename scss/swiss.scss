@@ -6,5 +6,6 @@ $md: 768px;
 $lg: 960px;
 $xl: 1400px;
 $gutter: 24px;
+$unit: 2px;
 
-@include grid-system(12, $sm, $md, $lg, $xl, $gutter, $ns);
+@include fit-grid-system(12, $sm, $md, $lg, $xl, $gutter, $unit, $ns);
